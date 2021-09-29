@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type List = {
-  id: number
+  id: string
   name: string
   checked?: boolean
 }
@@ -12,8 +12,8 @@ type Data = {
 }
 
 const resp = [
-  {id: 1, name: 'John', checked: false},
-  {id: 2, name: 'Luis', checked: false}
+  {id: '1', name: 'John', checked: false},
+  {id: '2', name: 'Luis', checked: false}
 ]
 
 export default function handler(
