@@ -12,17 +12,17 @@ type List = {
 
 type FormValues = {
   name: string
+  checked: boolean
 }
 
 export default function Home() {
 
   const [todos, setTodos] = useState<List[]>([])
-  const {register, handleSubmit, reset} = useForm<FormValues>()
+  const { register, handleSubmit } = useForm<FormValues>()
 
   useEffect(() => {
     localForage.getItem('todo')
       .then((response: any) => {
-        console.log(response);
         if (response) setTodos(response)
       })
       .catch(error => {
@@ -37,30 +37,31 @@ export default function Home() {
   //   //   setTodos(data.list)
   //   // })
 
-      
+
   // }
-  
-  async function changeAddTodo(data: FormValues, e: any){
-    const addTodo = {id: `${uuid()}`, name:`${data.name}`}
+
+  async function changeAddTodo(data: FormValues, e: any) {
+    const addTodo = { id: `${uuid()}`, name: `${data.name}`, checked: false }
     setTodos([...todos!, addTodo])
     await localForage.setItem('todo', [...todos!, addTodo]).then(() => {
-      console.log('Atualizado')
-      console.log('log de add: ', todos)
     }).catch((err) => {
       console.log(err)
     })
     e.target.reset()
   }
 
-  const listLocal = () => {
-    const todoLocal = localForage.getItem('todo')
+  const checkTodo = async (id: string) => {
+    await localForage.getItem('todo')
       .then((response: any) => {
+        const todoIndex = todos.findIndex(todo => todo.id === id)
+        response[todoIndex].checked = !response[todoIndex].checked
+        setTodos([...response])
+        localForage.setItem('todo', response)
         return response
       })
       .catch(error => {
         return console.log(error)
       });
-    console.log(todoLocal)
   }
 
   const removeTodo = (id: string) => {
@@ -72,15 +73,14 @@ export default function Home() {
     localForage.setItem('todo', todos)
   }
 
-  const deleteListLocal = () => {
+  const deleteAllTodo = () => {
     localForage.removeItem('todo')
-    .then((response: any) => {
-      console.log(response)
-      setTodos(response)
-    })
-    .catch(error => {
-      return console.log(error)
-    })
+      .then((response: any) => {
+        setTodos(response)
+      })
+      .catch(error => {
+        return console.log(error)
+      })
   }
 
   // useEffect(() => {
@@ -91,8 +91,10 @@ export default function Home() {
     <div>
       <ul>
         {todos?.map(todo => (
-          <li key={todo?.id}>{todo?.name}
-          <button onClick={() => removeTodo(todo?.id)}>Feito</button>
+          <li key={todo?.id}>
+            <input type="checkbox" checked={todo?.checked} onChange={() => checkTodo(todo?.id)} />
+            {todo?.name}
+            <button onClick={() => removeTodo(todo?.id)}>Feito</button>
           </li>
         ))}
       </ul>
@@ -104,8 +106,7 @@ export default function Home() {
         </div>
         <button>Enviar</button>
       </form>
-      <button onClick={listLocal}>GET</button>
-      <button onClick={deleteListLocal}>DELETE ALL</button>
+      <button onClick={deleteAllTodo}>DELETE ALL</button>
     </div>
   )
 }
