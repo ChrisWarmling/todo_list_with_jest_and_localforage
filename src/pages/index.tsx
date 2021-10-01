@@ -51,17 +51,23 @@ export default function Home() {
   }
 
   const checkTodo = async (id: string) => {
-    await localForage.getItem('todo')
-      .then((response: any) => {
+    // await localForage.getItem('todo')
+    //   .then((response: any) => {
         const todoIndex = todos.findIndex(todo => todo.id === id)
-        response[todoIndex].checked = !response[todoIndex].checked
-        setTodos([...response])
-        localForage.setItem('todo', response)
-        return response
-      })
-      .catch(error => {
-        return console.log(error)
-      });
+        
+        // response[todoIndex].checked = !response[todoIndex].checked
+        
+        todos[todoIndex].checked = !todos[todoIndex].checked
+
+        setTodos([...todos])
+        
+        localForage.setItem('todo', todos)
+        
+  //       return response
+  //     })
+  //     .catch(error => {
+  //       return console.log(error)
+  //     });
   }
 
   const removeTodo = (id: string) => {
@@ -69,6 +75,8 @@ export default function Home() {
     todos.splice(todoIndex, 1)
 
     setTodos([...todos])
+    
+    // setTodos(todos.filter(todo => todo.id != id))
 
     localForage.setItem('todo', todos)
   }

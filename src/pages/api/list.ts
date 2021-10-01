@@ -12,8 +12,8 @@ type Data = {
 }
 
 const resp = [
-  {id: '1', name: 'John', checked: false},
-  {id: '2', name: 'Luis', checked: false}
+  { id: '1', name: 'John', checked: false },
+  { id: '2', name: 'Luis', checked: false }
 ]
 
 export default function handler(
@@ -21,5 +21,15 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
   const list = resp
-  res.status(200).json({list})
+  res.status(200).json({ list })
 }
+
+// function cont(valor) {
+//   let notas = [100, 50, 20, 10, 5, 2]
+//   for (let celula of notas) {
+//     // if(valor === 8) continue
+//     var qtd = parseInt(valor / celula)
+//     console.log(`qtd de ${celula}: ${qtd}`)
+//     valor = valor % celula
+//   }
+// }
