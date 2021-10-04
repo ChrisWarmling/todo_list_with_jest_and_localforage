@@ -65,7 +65,7 @@ Com Jest cria-se um "ambiente" de testes automatizado, basicamente é selecionad
 #### Instalações e configurações
 Primeiro instalar os seguintes pacotes:
 ```console
-yarn add -D jest @types/jest @babel/preset-typescript @testing-library/jest-dom jest-styled-components @testing-library/react
+yarn add -D jest @types/jest @babel/preset-typescript @testing-library/jest-dom jest-styled-components @testing-library/react styled-components.macro
 ```
 Após as instalações deverão ser feitas algumas configurações, na raiz do projeto deve-se criar o aquivo `.babelrc.js` e adicionar o seguinte código:
 ```js
