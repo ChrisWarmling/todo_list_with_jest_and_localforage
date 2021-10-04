@@ -98,7 +98,7 @@ module.exports = {
   }
 }
 ```
-Para não ficar importando em todos os documentos as bibliotecas necessárias, fazer uma pasta em `src` chamada `.jest` e dentro dela um arquivo com o nome `jest-setup.ts` e adicionar o seguinte:
+Para não ficar importando em todos os documentos as bibliotecas necessárias, fazer uma pasta na raiz do projeto chamada `.jest` e dentro dela um arquivo com o nome `jest-setup.ts` e adicionar o seguinte:
 ```ts
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
@@ -132,3 +132,82 @@ Opcionalmente pode-se adicionar o seguinte também em scripts:
 ```
 
 #### Padrões e codificação de testes
+Todos os arquivos relacionados ao teste direto deve conter no nome de arquivo `nome.spec.tsx` dentro de qualquer pasta, para melhor organização coloca-se na pasta `__test__` e dali fazer as importações necessárias.
+A codificação dos testes segue um padrão comum:
+```tsx
+describe('', () => {
+  it('', () => {
+    //teste
+  })
+})
+```
+A função `describe` serve para agrupar ou organizar melhor os testes, entre as aspas coloca-se um rótulo para tal grupo de testes como por exemplo qual página será testada, `it`  funciona de forma semelhante, no lugar de `it` pode-se colocar `test`, por padrão nesse 'escopo' determina-se o que se espera daquele teste.
+Nos testes especificamente não há um padrão, há muitas formas de testar um componente ou uma página. Adiante há três exemplos diferentes para diferentes ações.
+O primeiro teste verifica se há um botão enviar na página, nota-se a presença de um id, esse seria o responsável para que o teste possa identificar diretamente o elemento:
+```tsx
+// elemento na página
+<div data-testid="todo-list">
+  <button>Enviar</button>
+</div>
+
+// teste
+test('Testing to have send button', async () => {
+  const { getByText, getByTestId } = render(<Home/>)
+
+  expect(getByTestId("todo-list")).toContainElement(
+      getByText("Enviar")
+    )
+})
+```
+O segundo teste verifica a existencia de um input especifico:
+```tsx
+// elemento na página
+<div>
+  <label>Todo:</label>
+  <input {...register('name')} type="text" data-testid="todo-input" />
+</div>
+
+// teste
+test('Testing to have input element', async () => {
+  render(<Home/>)
+
+  const inputTd = screen.getByTestId('todo-input')
+  expect(inputTd).toBeInTheDocument()
+  expect(inputTd).toHaveAttribute('type', 'text')
+})
+```
+O terceiro teste verifica a funcionalidade do elemento colocando um texto no input e clicando em enviar:
+```tsx
+test('Testing send event', async () => {
+  render(<Home />)
+  const setup = () => {
+      const input = screen.getByTestId('todo-input')
+      return {
+        input,
+        ...screen,
+      }
+    }
+    const {input} = setup()
+    fireEvent.change(input, {target: {value: 'teste jest'}})
+    await actWait()
+    fireEvent.click(screen.getByText("Enviar"))
+    await actWait()
+    expect(screen.getByTestId('todo-list')).toContainElement(
+        screen.getByText('teste jest')
+    )
+})
+```
+Nota-se algumas linhas contendo `await actWait()`, quando adicionamos itens em uma aplicação React o navegador renderiza cada novo item que é colocado, isso não funciona dessa forma no teste sendo que seria necessário pedir para renderizar cada nova mudança, é isso o que essa função faz, ressaltando porém que essa função é 'customizada' sendo que existe uma função `act()` nativa do React que serve exatamente para testes, nesse caso especifico importa-se o act de `@testing-library/react`:
+```tsx
+import { act } from '@testing-library/react'
+const wait = (amount = 0) => {
+  return new Promise((resolve) => setTimeout(resolve, amount));
+};
+
+const actWait = async (amount = 0) => {
+  await act(async () => {
+    await wait(amount);
+  });
+};
+```
+###### Até o momento da publicação não foi encontrado uma solução para o erro de multiplos elementos que obtém-se quando realiza-se o teste de forma que primeiro é feito o teste de adicionar um item e em segundo momento o de remover sendo que nesse segundo teste é necessário adicionar o item que será removido.

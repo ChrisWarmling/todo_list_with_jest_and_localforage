@@ -96,13 +96,13 @@ export default function Home() {
   // }, [todos])
 
   return (
-    <div>
-      <ul>
+    <div data-testid="todo-list">
+      <ul data-testid="todo-itens">
         {todos?.map(todo => (
           <li key={todo?.id}>
             <input type="checkbox" checked={todo?.checked} onChange={() => checkTodo(todo?.id)} />
             {todo?.name}
-            <button onClick={() => removeTodo(todo?.id)}>Feito</button>
+            <button onClick={() => removeTodo(todo?.id)} data-testid={`${todo?.name}`}>Feito</button>
           </li>
         ))}
       </ul>
@@ -110,7 +110,7 @@ export default function Home() {
       <form onSubmit={handleSubmit(changeAddTodo)}>
         <div>
           <label>Todo:</label>
-          <input {...register('name')} type="text" />
+          <input {...register('name')} type="text" data-testid="todo-input" />
         </div>
         <button>Enviar</button>
       </form>
