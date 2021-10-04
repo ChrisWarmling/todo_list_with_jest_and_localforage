@@ -132,7 +132,7 @@ Opcionalmente pode-se adicionar o seguinte também em scripts:
 ```
 
 #### Padrões e codificação de testes
-Todos os arquivos relacionados ao teste direto deve conter no nome de arquivo `nome.spec.tsx` dentro de qualquer pasta, para melhor organização coloca-se na pasta `__test__` e dali fazer as importações necessárias.
+Todos os arquivos relacionados ao teste direto deve conter no nome de arquivo `nome.spec.tsx` dentro de qualquer pasta, para melhor organização coloca-se na pasta `__test__` e dali fazer as importações necessárias com relação a página ou componente que será testado.
 A codificação dos testes segue um padrão comum:
 ```tsx
 describe('', () => {
